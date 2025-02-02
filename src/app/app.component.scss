@@ -1,57 +1,78 @@
-// // .component-library {
-// //     padding: 10px;
-// //     width: 200px;
-// //     float: left;
-// //     background-color: #f5f5f5;
-// //   }
-// //   .canvas {
-// //     margin-left: 220px;
-// //     padding: 10px;
-// //     min-height: 300px;
-// //     background-color: #e8f5e9;
-// //   }
-// //   .draggable-component {
-// //     margin-bottom: 10px;
-// //     cursor: pointer;
-// //   }
-// //   .dropped-component {
-// //     margin: 10px 0;
-// //   }
+.nav-bar{
+  height:80px;
+  width:100%;
+  background-color:#191645;
+  display:flex;
+  flex-direction: row;
+  justify-content: space-between;
+  font-size: 14px;
+  font-weight: bold;
+  color:#ffffff;
+}
 
+.nav-bar .left{
+  margin-right:20px;
+  padding: 1rem;
+}
 
+.right button{
+  width: 10rem;
+  height: 3rem;
+  appearance: none;
+  border: none;
+  cursor: pointer;
+  isolation: isolate;
+  margin: 0;
+  box-sizing: border-box;
+  transition: all 200ms ease-out;
+  color: #FFFFFF;
+  font-size: 12px;
+  line-height: 1.5;
+  font-weight: 700;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 16px 60px;
+  border-radius: 1rem;
+  background: #43C6AC;
+  box-shadow: 0 12px 24px 0 color-mix(in oklab, black, transparent 90%);
+  position: relative;
+  overflow: hidden;
 
+  &::before {
+    content: "";
+    border-radius: inherit;
+    background: linear-gradient(90deg, var(--pink), var(--trans-red), var(--yellow));
+    z-index: -1;
+    position: absolute;
+    inset: 0;
+    transform: translateX(-100%);
+  }
+  & > span {
+    color: transparent;
+    background: linear-gradient(90deg, var(--pink), var(--trans-red), var(--yellow));
+    background-clip: text;
+  }
 
-// .component-library {
-//     padding: 10px;
-//     width: 200px;
-//     float: left;
-//     display: flex;
-//     flex-direction: column;
-//     justify-content: space-between;
-//     height: 100vh;
-//     background-color: #f5f5f5;
-//   }
+  &:is(:hover, :focus) {
+    box-shadow: 0 0 0 0 color-mix(in oklab, black, transparent 90%);
+    scale: 1.2;
 
-//   .library-item {
-//     margin-bottom: 10px;
-//     height: 10rem;
-//     background-color: green;
-//   }
+    &::before {
+      transform: translateX(0);
+    }
 
-//   .canvas {
-//     margin-left: 220px;
-//     padding: 10px;
-//     min-height: 300px;
-//     background-color: #e8f5e9;
-//     // position: relative;
-//     float: left;
-//     width: calc(50% - 250px);
-//   }
+    & > span {
+      color: white;
+    }
+  }
 
-// //   .canvas-item {
-// //     position: absolute;
-// //   }
+}
 
+.nav-bar .right{
+  margin-right:20px;
+  padding: 1rem;
+}
 
 
 .property-editor {
@@ -61,13 +82,12 @@
   flex-direction: column;
   width: 12%;
   justify-content: space-between;
-  background-color: rgb(4, 170, 109);
-  margin-left: 20px;
+  background-color: #43C6AC;
 }
 
 .property-editor mat-form-field{
   width: 10rem;
-  height: 10rem;
+  height: 3rem;
 }
 
 
@@ -82,16 +102,78 @@
 }
 
 .component-library, .canvas, .code-editor {
-  padding: 20px;
-  background-color: #f1f1f1;
+  padding: 15px;
+  background-color: #191645;
 }
 
 .component-library {
   width: 15%;
   display: flex;
+  color:#ffffff;
+  font-weight: bold;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: space-evenly;
 }
+
+
+
+
+.component-library button {
+  width: 10rem;
+  height: 3rem;
+  appearance: none;
+  border: none;
+  cursor: pointer;
+  isolation: isolate;
+  margin: 0;
+  box-sizing: border-box;
+  transition: all 200ms ease-out;
+  color: #FFFFFF;
+  font-size: 14px;
+  line-height: 1.5;
+  font-weight: 800;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 16px 60px;
+  border-radius: 50rem;
+  background: #43C6AC;
+  box-shadow: 0 12px 24px 0 color-mix(in oklab, black, transparent 90%);
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: "";
+    border-radius: inherit;
+    z-index: -1;
+    position: absolute;
+    inset: 0;
+    transform: translateX(-100%);
+  }
+  & > span {
+    color: transparent;
+    background-clip: text;
+  }
+
+  &:is(:hover, :focus) {
+    box-shadow: 0 0 0 0 color-mix(in oklab, black, transparent 90%);
+    scale: 1.2;
+
+    &::before {
+      transform: translateX(0);
+    }
+
+    & > span {
+      color: white;
+    }
+  }
+}
+
+
+
+
+
+
 
 .canvas {
   width: 50%;

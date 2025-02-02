@@ -1,29 +1,63 @@
+<div class="nav-bar">
+
+  <div class="left">
+
+    <div>
+      <h3>UI Composer</h3>
+    </div>
+
+  </div>
+
+
+  <div class="right">
+
+    <button>Download Component Code</button>
+  </div>
+
+</div>
+
+
 <div class="ui-container">
 
 <div class="component-library">
   <h3>Component Library</h3>
   <ng-container *ngFor="let component of availableComponents">
-    <button *ngIf="component.type === 'button'" mat-raised-button (click)="addComponent(component)">
-      {{ component.label }}
-    </button>
 
-    <div *ngIf="component.type === 'div'" (click)="addComponent(component)">
-      {{ component.label }}
+    <div *ngIf="component.componentType === 'button'"  (click)="addComponent(component)">
+      <button>Button</button>
     </div>
 
-    <mat-form-field *ngIf="component.type === 'input'" (click)="addComponent(component)">
-      <input matInput placeholder="{{ component.label }}">
-    </mat-form-field>
+    <div *ngIf="component.componentType === 'div'" (click)="addComponent(component)">
+       <button>div</button>
+    </div>
 
-    <mat-checkbox *ngIf="component.type === 'checkbox'" (click)="addComponent(component)">
-      {{ component.label }}
-    </mat-checkbox>
+    <div *ngIf="component.componentType === 'input'" (click)="addComponent(component)">
+      <button>Input Field</button>
+    </div>
 
-    <mat-card *ngIf="component.type === 'mat-card'" (click)="addComponent(component)">
-      {{ component.label }}
-    </mat-card>
+    <div *ngIf="component.componentType === 'checkbox'" (click)="addComponent(component)">
+       <button>Check box</button>
+    </div>
 
-    <mat-grid-list cols="2" rowHeight="2:1"> </mat-grid-list>
+    <div *ngIf="component.componentType === 'mat-card'" (click)="addComponent(component)">
+      <button>Mat Card</button>
+    </div>
+
+    <div *ngIf="component.componentType === 'form'"  (click)="addComponent(component)">
+      <button>Normal Form</button>
+    </div>
+
+    <div *ngIf="component.componentType === 'img'" (click)="addComponent(component)">
+      <button>Image</button>
+    </div>
+
+    <div *ngIf="component.componentType === 'h1'" (click)="addComponent(component)">
+      <button>h1</button>
+    </div>
+
+    <div *ngIf="component.componentType === 'ul'"  (click)="addComponent(component)">
+      <button>ul</button>
+    </div>
 
   </ng-container>
 </div>
@@ -61,6 +95,19 @@
              (input)="updateComponentStyles('font-size', selectedComponent.styles.fontSize)">
     </mat-form-field>
 
+
+    <!-- Position Properties -->
+    <h4>Properties</h4>
+
+
+    <mat-form-field appearance="outline">
+      <mat-label>Type</mat-label>
+      <input matInput type="text" [(ngModel)]="selectedComponent.properties.type" (input)="updateComponentProperties('type', selectedComponent.properties.type)">
+    </mat-form-field>
+
+
+
+
     <!-- Position Properties -->
     <h4>Position</h4>
     <mat-form-field appearance="outline">
@@ -90,13 +137,12 @@
 
 
  <div class="canvas">
-  <h3>UI Builder</h3>
 
   <ng-container *ngFor="let component of canvasComponents; let i = index">
 
     <!-- Button Component -->
     <button
-      *ngIf="component.type === 'button'"
+      *ngIf="component.componentType === 'button'"
       cdkDrag
       [ngStyle]="{
         left: component.position.left + 'px',
@@ -115,7 +161,7 @@
 
     <!-- Card Component -->
     <mat-card
-    *ngIf="component.type === 'card'"
+    *ngIf="component.componentType === 'card'"
       cdkDrag
       [ngStyle]="{
         left: component.position.left + 'px',
@@ -138,7 +184,7 @@
 
     <!-- Input Field Component -->
     <mat-form-field
-      *ngIf="component.type === 'input'"
+      *ngIf="component.componentType === 'input'"
       cdkDrag
       [ngStyle]="{
         left: component.position.left + 'px',
@@ -156,7 +202,7 @@
 
     <!-- Checkbox Component -->
     <mat-checkbox
-      *ngIf="component.type === 'checkbox'"
+      *ngIf="component.componentType === 'checkbox'"
       cdkDrag
       [ngStyle]="{
         left: component.position.left + 'px',
@@ -175,7 +221,7 @@
 
 
     <div
-        *ngIf="component.type === 'div'"
+        *ngIf="component.componentType === 'div'"
         cdkDrag
         cdkDropList
         #dropList="cdkDropList"
@@ -192,6 +238,7 @@
         (cdkDragEnded)="onDragEnded($event, i)"
         (click)="selectComponent(component)"
         (contextmenu)="openContextMenu($event, component)"
+        (mousedown)="onMouseDown($event, component)"
 
       >
         {{ component.label }}
@@ -199,7 +246,7 @@
 
          <!-- Render Children Dynamically -->
       <ng-container *ngFor="let child of component.children">
-        <ng-container [ngSwitch]="child.type">
+        <ng-container [ngSwitch]="child.componentType">
           <!-- Child Button -->
           <button
             *ngSwitchCase="'button'"
@@ -225,6 +272,64 @@
 
    </div>
 
+
+    <form
+      *ngIf="component.componentType === 'form'"
+      cdkDrag
+      [ngStyle]="{
+          left: component.position.left + 'px',
+          top: component.position.top + 'px',
+          backgroundColor: component.styles['backgroundColor'],
+          width: component.styles['width'],
+          height: component.styles['height']
+        }"
+      (cdkDragMoved)="onDragMoved($event, i)"
+      (cdkDragEnded)="onDragEnded($event, i)"
+      (click)="selectComponent(component)"
+      (contextmenu)="openContextMenu($event, component)"
+
+    >
+
+      <!-- Render Children Dynamically -->
+      <ng-container *ngFor="let child of component.children">
+        <ng-container [ngSwitch]="child.componentType">
+          <!-- Child Button -->
+          <button
+            *ngSwitchCase="'button'"
+            cdkDrag
+            [ngStyle]="{
+              left: child.position.left + 'px',
+              top: child.position.top + 'px',
+              backgroundColor: child.styles['backgroundColor'],
+              width: child.styles['width'],
+              height: child.styles['height']
+            }"
+            (click)="selectChildComponent($event,child)"
+
+          >
+            {{ child.label }}
+          </button>
+
+          <input
+            *ngSwitchCase="'input'"
+            cdkDrag
+            [ngStyle]="{
+              left: child.position.left + 'px',
+              top: child.position.top + 'px',
+              backgroundColor: child.styles['backgroundColor'],
+              width: child.styles['width'],
+              height: child.styles['height']
+            }"
+            (click)="selectChildComponent($event, child)"
+
+          >
+          <!-- Additional child components (input, checkbox, etc.) -->
+        </ng-container>
+      </ng-container>
+
+
+
+    </form>
 
 
 

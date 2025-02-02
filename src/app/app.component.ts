@@ -29,27 +29,19 @@ import { randomUUID } from 'crypto';
   styleUrl: './app.component.scss'
 })
 export class AppComponent {
-  title = 'uibuilder';
+  title = 'UI Composer';
 
   availableComponents = [
-    { type: 'button', label: 'Button', properties: {} },
-    { type: 'input', label: 'Input Field', properties: { value: '' } },
-    { type: 'checkbox', label: 'Checkbox', properties: { checked: false } },
-    {
-      type: 'mat-card',
-      label: 'Material Card',
-      properties: {},
-      children: [
-        { type: 'mat-card-header', label: 'Card Header', children: [] },
-        { type: 'mat-card-content', label: 'Card Content', children: [] },
-        { type: 'mat-card-actions', label: 'Card Actions', children: [
-          { type: 'button', label: 'LIKE' },
-          { type: 'button', label: 'SHARE' }
-        ]}
-      ]
-    },
-    { type: 'mat-grid-list', label: 'Mat-grid-list', properties: {}, styles: {}, children: [] },
-    { type: 'div', label: 'div', properties: {}, styles: {}, children: [] }
+    { componentType: 'button', label: '', properties: {} },
+    { componentType: 'input', label: 'input', properties: { value: '' } },
+    { componentType: 'checkbox', label: 'Checkbox', properties: { checked: false } },
+    { componentType: 'div', label: 'div', properties: {}, styles: {}, children: [] },
+    { componentType: 'form', label: 'Normal form', properties: {}, styles: {}, children: [] },
+    { componentType: 'label', label: 'label', properties: {}, styles: {}, children: [] },
+    { componentType: 'img', label: 'img', properties: {}, styles: {}, children: [] },
+    { componentType: 'ul', label: 'ul', properties: {}, styles: {}, children: [] },
+    { componentType: 'li', label: 'li', properties: {}, styles: {}, children: [] },
+    { componentType: 'h1', label: 'h1', properties: {}, styles: {}, children: [] }
 ];
 
 
@@ -58,9 +50,7 @@ export class AppComponent {
   targetComponent: ComponentNode | undefined;
 
 
-
   constructor(public dialog: MatDialog) { }
-
 
   btn : string = 'button';
 
@@ -69,21 +59,62 @@ export class AppComponent {
   generatedCode: string = '';
 
   addComponent(component: any) {
+
+    // Get the properties based on the component type
+    const additionalProperties = this.getComponentProperties(component);
+
     this.canvasComponents.push({
       ...component,
+      ...additionalProperties,
       id: Date.now().toString(),
       position: { left: 0, top: 0 },
       styles: {
-        backgroundColor: component.styles?.backgroundColor || 'orange',
-        width: component.styles?.width || '300px',
-        height: component.styles?.height || '50px',
+        backgroundColor: component.styles['backgroundColor'] || 'orange',
+        width: component.styles['width'] || '300px',
+        height: component.styles['height'] || '50px',
       },
     });
 
-
-
-
     this.generateAngularCode()
+  }
+
+
+
+ // properties component e.g input | value , type
+  getComponentProperties(component : any) {
+    let additionalProperties = {};
+
+    switch (component.type) {
+      case 'input':
+        additionalProperties = {
+          value: component.properties.value || '',
+          type: component.properties.type || 'text',
+          placeholder: component.properties.placeholder || 'Enter value',
+        };
+        break;
+
+      case 'button':
+        additionalProperties = {
+          label: component.properties.label || 'Button',
+          type: component.properties.type || 'button',
+        };
+        break;
+
+      case 'checkbox':
+        additionalProperties = {
+          checked: component.properties.checked || false,
+          label: component.properties.label || 'Checkbox',
+        };
+        break;
+
+      // Add cases for other component types as needed
+
+      default:
+        additionalProperties = {};
+        break;
+    }
+
+    return additionalProperties;
   }
 
   // onDragMoved(event: CdkDragMove<any>, index: number) {
@@ -178,7 +209,15 @@ export class AppComponent {
 
 
 
-  selectComponent(component: any) {
+  selectComponent(component: any) : void {
+    console.log("Selecting component", component);
+    this.selectedComponent = component;
+  }
+
+
+  selectChildComponent(event: MouseEvent,component: any) : void {
+    console.log("Selecting Child component", component);
+    event.stopPropagation(); // Prevent bubbling up to parent
     this.selectedComponent = component;
   }
 
@@ -187,6 +226,14 @@ export class AppComponent {
       this.selectedComponent.styles[property] = value;
     }
   }
+
+
+  updateComponentProperties(property: string, value: string) {
+    if (this.selectedComponent) {
+      this.selectedComponent.properties[property] = value;
+    }
+  }
+
 
   onDrop(event: CdkDragDrop<any[]>, parentComponent: any): void {
 
@@ -234,13 +281,13 @@ export class AppComponent {
 renderChildComponents(component: ComponentNode): string {
   let componentHtml = '';
 
-  switch (component.type) {
+  switch (component.componentType) {
     case 'button':
       componentHtml = `<button>${component.label}`;
       break;
 
     case 'input':
-      componentHtml = `<mat-form-field><input matInput placeholder="${component.label}"></mat-form-field>`;
+      componentHtml = `<button>${component.label}`;
       break;
 
     case 'checkbox':
@@ -249,6 +296,10 @@ renderChildComponents(component: ComponentNode): string {
 
     case 'div':
       componentHtml = `<div>`;
+      break;
+
+    case 'form':
+      componentHtml = `<form>`;
       break;
 
     default:
@@ -263,16 +314,20 @@ renderChildComponents(component: ComponentNode): string {
   }
 
   // Close the component's tag (for div, button, input, etc.)
-  if (component.type === 'button') {
+  if (component.componentType === 'button') {
     componentHtml += `</button>`;
   }
 
-  if (component.type === 'div') {
+  if (component.componentType === 'div') {
     componentHtml += `</div>`;
   }
 
-  if (component.type === 'checkbox') {
+  if (component.componentType === 'checkbox') {
     componentHtml += `</mat-checkbox>`;
+  }
+
+  if (component.componentType === 'form') {
+    componentHtml += `</form>`;
   }
 
   return componentHtml;
@@ -295,9 +350,16 @@ renderChildComponents(component: ComponentNode): string {
 
 
   addChildComponent(type: string) {
+
+    // Get the properties based on the component type
+    //const additionalProperties = this.getComponentProperties(component);
+
+    console.log("Adding Children >>>>>>>>>>>")
+
+
     const newChild = {
       id: Date.now().toString(),
-      type: type,
+      componentType: type,
       label: `${type.charAt(0).toUpperCase() + type.slice(1)} Component`,
       position: { left: 0, top: 0 },
       styles: { backgroundColor: '#f0f0f0', width: '100px', height: '50px' },
@@ -305,15 +367,34 @@ renderChildComponents(component: ComponentNode): string {
       properties: {}
     };
 
+
+    // Get additional properties based on the component type
+    const additionalProperties = this.getComponentProperties(newChild);
+
+    // Merge the properties into the new child component
+    const childWithProperties = {
+      ...newChild,
+      ...additionalProperties,
+    };
+
+    console.log(childWithProperties)
+
+    console.log(this.targetComponent)
+
     if (this.targetComponent) {
+
+
       // Update the tree immutably with the new child added to the correct parent
-      this.canvasComponents = this.addComponentToTree(this.canvasComponents, this.targetComponent.id, newChild);
+      this.canvasComponents = this.addComponentToTree(this.canvasComponents, this.targetComponent.id, childWithProperties);
+
+      console.log(this.canvasComponents);
 
       this.closeContextMenu();
       this.generateAngularCode();
-
       this.logAllComponents();
     }
+
+
   }
 
   addComponentToTree(components: ComponentNode[], targetId: string, newChild: ComponentNode): ComponentNode[] {
@@ -336,7 +417,7 @@ renderChildComponents(component: ComponentNode): string {
   logAllComponents() {
     const traverseAndLog = (components: ComponentNode[], depth: number = 0): void => {
       components.forEach(component => {
-        console.log(`${' '.repeat(depth * 2)}Component: ${component.type} (ID: ${component.id})`);
+        console.log(`${' '.repeat(depth * 2)}Component: ${component.componentType} (ID: ${component.id})`);
         if (component.children && component.children.length > 0) {
           traverseAndLog(component.children, depth + 1);
         }
@@ -366,7 +447,61 @@ renderChildComponents(component: ComponentNode): string {
 
 
 
+  // element resizing
 
+  resizing: boolean = false;
+  initialMousePosition: { x: number; y: number } = { x: 0, y: 0 };
+  initialSize: { width: number; height: number } = { width: 0, height: 0 };
+
+  // Mouse down to start resizing
+  onMouseDown(event: MouseEvent, component: ComponentNode) {
+    if (this.isNearBottomRightCorner(event, component)) {
+      this.resizing = true;
+      this.selectedComponent = component;
+      this.initialMousePosition = { x: event.clientX, y: event.clientY };
+      this.initialSize = {
+        width: parseInt(component.styles['width'] || '100', 10),
+        height: parseInt(component.styles['height'] || '100', 10),
+      };
+      event.preventDefault();
+      window.addEventListener('mousemove', this.onMouseMove);
+      window.addEventListener('mouseup', this.onMouseUp);
+    }
+  }
+
+  // Mouse move to resize the component
+  onMouseMove = (event: MouseEvent) => {
+    if (this.resizing && this.selectedComponent) {
+      const deltaX = event.clientX - this.initialMousePosition.x;
+      const deltaY = event.clientY - this.initialMousePosition.y;
+
+      const newWidth = this.initialSize.width + deltaX;
+      const newHeight = this.initialSize.height + deltaY;
+
+      this.selectedComponent.styles.width = `${Math.max(newWidth, 50)}px`;
+      this.selectedComponent.styles.height = `${Math.max(newHeight, 50)}px`;
+    }
+  };
+
+  // Mouse up to stop resizing
+  onMouseUp = () => {
+    this.resizing = false;
+    window.removeEventListener('mousemove', this.onMouseMove);
+    window.removeEventListener('mouseup', this.onMouseUp);
+  };
+
+  // Check if the mouse is near the bottom-right corner
+  isNearBottomRightCorner(event: MouseEvent, component: ComponentNode): boolean {
+    const componentElement = document.getElementById(component.id);
+    if (!componentElement) return false;
+
+    const rect = componentElement.getBoundingClientRect();
+    const buffer = 10; // Threshold to trigger resizing
+    return (
+      event.clientX >= rect.right - buffer &&
+      event.clientY >= rect.bottom - buffer
+    );
+  }
 
 
 }
