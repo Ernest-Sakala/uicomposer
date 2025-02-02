@@ -24,52 +24,90 @@
     </mat-card>
 
     <mat-grid-list cols="2" rowHeight="2:1"> </mat-grid-list>
-    
+
   </ng-container>
 </div>
 
 
-<div class="property-editor" *ngIf="selectedComponent">
-  <h3>Property Editor</h3>
-  <mat-form-field appearance="outline">
-    <mat-label>Background Color</mat-label>
-    <input matInput [(ngModel)]="selectedComponent.styles.backgroundColor" (input)="updateComponentStyles('background-color', selectedComponent.styles.backgroundColor)">
-  </mat-form-field>
+  <div class="property-editor" *ngIf="selectedComponent">
 
-  <mat-form-field appearance="outline">
-    <mat-label>Width</mat-label>
-    <input matInput [(ngModel)]="selectedComponent.styles.width" (input)="updateComponentStyles('width', selectedComponent.styles.width)">
-  </mat-form-field>
+    <h3>Property Editor for {{ selectedComponent.label }}</h3>
 
-  <mat-form-field appearance="outline">
-    <mat-label>Height</mat-label>
-    <input matInput [(ngModel)]="selectedComponent.styles.height" (input)="updateComponentStyles('height', selectedComponent.styles.height)">
-  </mat-form-field>
+    <!-- Styling Properties -->
+    <h4>Styles</h4>
+    <mat-form-field appearance="outline">
+      <mat-label>Background Color</mat-label>
+      <input matInput type="color" [(ngModel)]="selectedComponent.styles.backgroundColor" (input)="updateComponentStyles('background-color', selectedComponent.styles.backgroundColor)">
+    </mat-form-field>
 
+    <mat-form-field appearance="outline">
+      <mat-label>Width</mat-label>
+      <input matInput type="text" [(ngModel)]="selectedComponent.styles.width" (input)="updateComponentStyles('width', selectedComponent.styles.width)">
+    </mat-form-field>
 
-</div>
+    <mat-form-field appearance="outline">
+      <mat-label>Height</mat-label>
+      <input matInput type="text" [(ngModel)]="selectedComponent.styles.height" (input)="updateComponentStyles('height', selectedComponent.styles.height)">
+    </mat-form-field>
 
+    <mat-form-field appearance="outline">
+      <mat-label>Border Radius</mat-label>
+      <input matInput type="text" [(ngModel)]="selectedComponent.styles.borderRadius" (input)="updateComponentStyles('border-radius', selectedComponent.styles.borderRadius)">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Font Size</mat-label>
+      <input matInput type="text" [(ngModel)]="selectedComponent.styles.fontSize"
+             (input)="updateComponentStyles('font-size', selectedComponent.styles.fontSize)">
+    </mat-form-field>
+
+    <!-- Position Properties -->
+    <h4>Position</h4>
+    <mat-form-field appearance="outline">
+      <mat-label>Left Position</mat-label>
+      <input matInput type="number" [(ngModel)]="selectedComponent.position.left"
+             (input)="updateComponentStyles('left', selectedComponent.position.left)">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Top Position</mat-label>
+      <input matInput type="number" [(ngModel)]="selectedComponent.position.top"
+             (input)="updateComponentStyles('top', selectedComponent.position.top)">
+    </mat-form-field>
+
+<!--    &lt;!&ndash; Behavior Properties &ndash;&gt;-->
+<!--    <h4>Behavior</h4>-->
+<!--    <mat-form-field appearance="outline">-->
+<!--      <mat-label>Component Label</mat-label>-->
+<!--      <input matInput [(ngModel)]="selectedComponent.label" (input)="updateComponentLabel()">-->
+<!--    </mat-form-field>-->
+
+    <mat-checkbox [(ngModel)]="selectedComponent.properties.disabled">
+      Disabled
+    </mat-checkbox>
+
+  </div>
 
 
  <div class="canvas">
   <h3>UI Builder</h3>
-  
+
   <ng-container *ngFor="let component of canvasComponents; let i = index">
-    
+
     <!-- Button Component -->
     <button
       *ngIf="component.type === 'button'"
       cdkDrag
       [ngStyle]="{
-        left: component.position?.left + 'px',
-        top: component.position?.top + 'px',
-        backgroundColor: component.styles?.backgroundColor,
-        width: component.styles?.width,
-        height: component.styles?.height
+        left: component.position.left + 'px',
+        top: component.position.top + 'px',
+        backgroundColor: component.styles['backgroundColor'],
+        width: component.styles['width'],
+        height: component.styles['height']
       }"
       mat-raised-button
       (cdkDragMoved)="onDragMoved($event, i)"
-      (cdkDragEnded)="onDragEnded(i)"
+      (cdkDragEnded)="onDragEnded($event, i)"
       (click)="selectComponent(component)"
     >
       {{ component.label }}
@@ -80,14 +118,14 @@
     *ngIf="component.type === 'card'"
       cdkDrag
       [ngStyle]="{
-        left: component.position?.left + 'px',
-        top: component.position?.top + 'px',
-        backgroundColor: component.styles?.backgroundColor,
-        width: component.styles?.width,
-        height: component.styles?.height
+        left: component.position.left + 'px',
+        top: component.position.top + 'px',
+        backgroundColor: component.styles['backgroundColor'],
+        width: component.styles['width'],
+        height: component.styles['height']
       }"
       (cdkDragMoved)="onDragMoved($event, i)"
-      (cdkDragEnded)="onDragEnded(i)"
+      (cdkDragEnded)="onDragEnded($event,i)"
       (click)="selectComponent(component)"
       appearance="outlined"
       class="example-card"
@@ -95,7 +133,7 @@
     <ng-container *ngFor="let child of component.children">
       <!-- <ng-container *ngTemplateOutlet="renderComponent; context: { component: child }"></ng-container> -->
     </ng-container>
-      
+
     </mat-card>
 
     <!-- Input Field Component -->
@@ -103,15 +141,17 @@
       *ngIf="component.type === 'input'"
       cdkDrag
       [ngStyle]="{
-        left: component.position?.left + 'px',
-        top: component.position?.top + 'px',
-        width: component.styles?.width
+        left: component.position.left + 'px',
+        top: component.position.top + 'px',
+        backgroundColor: component.styles['backgroundColor'],
+        width: component.styles['width'],
+        height: component.styles['height']
       }"
       (cdkDragMoved)="onDragMoved($event, i)"
-      (cdkDragEnded)="onDragEnded(i)"
+      (cdkDragEnded)="onDragEnded($event,i)"
       (click)="selectComponent(component)"
     >
-      <input matInput placeholder="{{ component.label }}" [(ngModel)]="component.properties.value">
+      <input matInput placeholder="{{ component.label }}" [(ngModel)]="component.properties['value']">
     </mat-form-field>
 
     <!-- Checkbox Component -->
@@ -119,17 +159,77 @@
       *ngIf="component.type === 'checkbox'"
       cdkDrag
       [ngStyle]="{
-        left: component.position?.left + 'px',
-        top: component.position?.top + 'px',
-        width: component.styles?.width,
-        backgroundColor: component.styles?.backgroundColor
+        left: component.position.left + 'px',
+        top: component.position.top + 'px',
+        backgroundColor: component.styles['backgroundColor'],
+        width: component.styles['width'],
+        height: component.styles['height']
+
       }"
       (cdkDragMoved)="onDragMoved($event, i)"
-      (cdkDragEnded)="onDragEnded(i)"
+      (cdkDragEnded)="onDragEnded($event,i)"
       (click)="selectComponent(component)"
     >
       {{ component.label }}
     </mat-checkbox>
+
+
+    <div
+        *ngIf="component.type === 'div'"
+        cdkDrag
+        cdkDropList
+        #dropList="cdkDropList"
+        [cdkDropListData]="component.children"
+        (cdkDropListDropped)="onDrop($event, component)"
+        [ngStyle]="{
+          left: component.position.left + 'px',
+          top: component.position.top + 'px',
+          backgroundColor: component.styles['backgroundColor'],
+          width: component.styles['width'],
+          height: component.styles['height']
+        }"
+        (cdkDragMoved)="onDragMoved($event, i)"
+        (cdkDragEnded)="onDragEnded($event, i)"
+        (click)="selectComponent(component)"
+        (contextmenu)="openContextMenu($event, component)"
+
+      >
+        {{ component.label }}
+
+
+         <!-- Render Children Dynamically -->
+      <ng-container *ngFor="let child of component.children">
+        <ng-container [ngSwitch]="child.type">
+          <!-- Child Button -->
+          <button
+            *ngSwitchCase="'button'"
+            cdkDrag
+            [ngStyle]="{
+              left: child.position.left + 'px',
+              top: child.position.top + 'px',
+              backgroundColor: child.styles['backgroundColor'],
+              width: child.styles['width'],
+              height: child.styles['height']
+            }"
+            (click)="selectComponent(child)"
+
+          >
+            {{ child.label }}
+          </button>
+
+          <!-- Additional child components (input, checkbox, etc.) -->
+        </ng-container>
+      </ng-container>
+
+
+
+   </div>
+
+
+
+
+
+
   </ng-container>
 </div>
 
@@ -142,8 +242,20 @@
       <!-- <mat-label>Generated Code</mat-label> -->
       <textarea class="code-editor-area" matInput [(ngModel)]="generatedCode" rows="20" (input)="onCodeEdit()"></textarea>
     </mat-form-field>
-<!-- 
+<!--
     <button mat-raised-button color="primary" (click)="generateAngularCode()">Generate Angular Code</button> -->
   </div>
 
+</div>
+
+
+<div
+  class="context-menu"
+  *ngIf="contextMenuVisible"
+  [ngStyle]="{ left: contextMenuPosition.x, top: contextMenuPosition.y }"
+  (click)="closeContextMenu()"
+>
+  <button (click)="addChildComponent('button')">Add Button</button>
+  <button (click)="addChildComponent('div')">Add Div</button>
+  <button (click)="addChildComponent('input')">Add Input</button>
 </div>
