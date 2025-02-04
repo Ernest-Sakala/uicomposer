@@ -1,62 +1,78 @@
-<div class="nav-bar">
+<div class="navbar">
+    <div class="navbar-content">
+      <!-- Left Section: Navigation Menu -->
+      <div class="navbar-left">
+        <h4>UI Composer</h4>
+<!--        <button class="menu-button">-->
+<!--          <svg xmlns="http://www.w3.org/2000/svg" class="icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">-->
+<!--            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />-->
+<!--          </svg>-->
+<!--        </button>-->
+<!--        <button class="nav-link">Home</button>-->
+<!--        <button class="nav-link">Components</button>-->
+      </div>
 
-  <div class="left">
+      <!-- Center Section: Design Title -->
+<!--      <div class="navbar-center">-->
+<!--        <input type="text" class="design-title" value="Untitled Component" />-->
+<!--        <button class="save-button">Save</button>-->
+<!--      </div>-->
 
-    <div>
-      <h3>UI Composer</h3>
+      <!-- Right Section: Share, Notification, Download -->
+      <div class="navbar-right">
+        <button class="share-button">Download</button>
+      </div>
     </div>
-
-  </div>
-
-
-  <div class="right">
-
-    <button>Download Component Code</button>
-  </div>
-
 </div>
-
 
 <div class="ui-container">
 
 <div class="component-library">
-  <h3>Component Library</h3>
+  <h3>Components</h3>
   <ng-container *ngFor="let component of availableComponents">
 
-    <div *ngIf="component.componentType === 'button'"  (click)="addComponent(component)">
-      <button>Button</button>
+    <div class = "component-library-item" *ngIf="component.componentType === 'button'"  (click)="addComponent(component)">
+      <img src="./assets/web-button.png" alt="" >
+      <p>Button</p>
     </div>
 
-    <div *ngIf="component.componentType === 'div'" (click)="addComponent(component)">
-       <button>div</button>
+    <div  class = "component-library-item" *ngIf="component.componentType === 'div'" (click)="addComponent(component)">
+      <img src="./assets/div.png" alt="" >
+      <p>Div</p>
     </div>
 
-    <div *ngIf="component.componentType === 'input'" (click)="addComponent(component)">
-      <button>Input Field</button>
+    <div class = "component-library-item" *ngIf="component.componentType === 'input'" (click)="addComponent(component)">
+      <img src="./assets/text.png" alt="" >
+      <p>Input Field</p>
     </div>
 
-    <div *ngIf="component.componentType === 'checkbox'" (click)="addComponent(component)">
-       <button>Check box</button>
+    <div class = "component-library-item"  *ngIf="component.componentType === 'checkbox'" (click)="addComponent(component)">
+      <img src="./assets/approved.png" alt="" >
+      <p>Checkbox</p>
     </div>
 
-    <div *ngIf="component.componentType === 'mat-card'" (click)="addComponent(component)">
+    <div  *ngIf="component.componentType === 'mat-card'" (click)="addComponent(component)">
       <button>Mat Card</button>
     </div>
 
-    <div *ngIf="component.componentType === 'form'"  (click)="addComponent(component)">
-      <button>Normal Form</button>
+    <div class = "component-library-item" *ngIf="component.componentType === 'form'"  (click)="addComponent(component)">
+      <img src="./assets/contact-form.png" alt="" >
+      <p>Form</p>
     </div>
 
-    <div *ngIf="component.componentType === 'img'" (click)="addComponent(component)">
-      <button>Image</button>
+    <div  class = "component-library-item" *ngIf="component.componentType === 'img'" (click)="addComponent(component)">
+      <img src="./assets/image.png" alt="" >
+      <p>Image</p>
     </div>
 
-    <div *ngIf="component.componentType === 'h1'" (click)="addComponent(component)">
-      <button>h1</button>
+    <div class = "component-library-item" *ngIf="component.componentType === 'h1'" (click)="addComponent(component)">
+      <img src="./assets/h1.png" alt="" >
+      <p>H1</p>
     </div>
 
-    <div *ngIf="component.componentType === 'ul'"  (click)="addComponent(component)">
-      <button>ul</button>
+    <div class = "component-library-item" *ngIf="component.componentType === 'ul'"  (click)="addComponent(component)">
+      <img src="./assets/unordered-list.png" alt="" >
+      <p>Unordered List</p>
     </div>
 
   </ng-container>
@@ -65,62 +81,68 @@
 
   <div class="property-editor" *ngIf="selectedComponent">
 
-    <h3>Property Editor for {{ selectedComponent.label }}</h3>
+    <h2>Edit {{ selectedComponent.label }}</h2>
 
-    <!-- Styling Properties -->
     <h4>Styles</h4>
-    <mat-form-field appearance="outline">
-      <mat-label>Background Color</mat-label>
-      <input matInput type="color" [(ngModel)]="selectedComponent.styles.backgroundColor" (input)="updateComponentStyles('background-color', selectedComponent.styles.backgroundColor)">
-    </mat-form-field>
 
-    <mat-form-field appearance="outline">
-      <mat-label>Width</mat-label>
-      <input matInput type="text" [(ngModel)]="selectedComponent.styles.width" (input)="updateComponentStyles('width', selectedComponent.styles.width)">
-    </mat-form-field>
+    <div class="editor-input-container">
+      <label>Background Color</label>
+      <input type="color" [(ngModel)]="selectedComponent.styles.backgroundColor" (input)="updateComponentStyles('background-color', selectedComponent.styles.backgroundColor)">
 
-    <mat-form-field appearance="outline">
-      <mat-label>Height</mat-label>
-      <input matInput type="text" [(ngModel)]="selectedComponent.styles.height" (input)="updateComponentStyles('height', selectedComponent.styles.height)">
-    </mat-form-field>
+      <input type="text" [(ngModel)]="selectedComponent.styles.backgroundColor" (input)="updateComponentStyles('background-color', selectedComponent.styles.backgroundColor)">
+    </div>
 
-    <mat-form-field appearance="outline">
-      <mat-label>Border Radius</mat-label>
+    <div>
+      <label>Width</label>
+      <input type="text" [(ngModel)]="selectedComponent.styles.width" (input)="updateComponentStyles('width', selectedComponent.styles.width)">
+    </div>
+
+    <div>
+      <label>Height</label>
+      <input type="text" [(ngModel)]="selectedComponent.styles.height" (input)="updateComponentStyles('height', selectedComponent.styles.height)">
+    </div>
+
+    <div>
+      <label>Border</label>
+      <input  type="text" [(ngModel)]="selectedComponent.styles.border" (input)="updateComponentStyles('border', selectedComponent.styles.border)">
+    </div>
+
+    <div>
+      <label>Border Radius</label>
       <input matInput type="text" [(ngModel)]="selectedComponent.styles.borderRadius" (input)="updateComponentStyles('border-radius', selectedComponent.styles.borderRadius)">
-    </mat-form-field>
+    </div>
 
-    <mat-form-field appearance="outline">
-      <mat-label>Font Size</mat-label>
-      <input matInput type="text" [(ngModel)]="selectedComponent.styles.fontSize"
-             (input)="updateComponentStyles('font-size', selectedComponent.styles.fontSize)">
-    </mat-form-field>
+    <div>
+      <label>Font Size</label>
+      <input matInput type="text" [(ngModel)]="selectedComponent.styles.fontSize" (input)="updateComponentStyles('font-size', selectedComponent.styles.fontSize)">
+    </div>
 
+    <div>
+      <label>Padding</label>
+      <input matInput type="text" [(ngModel)]="selectedComponent.styles.padding" (input)="updateComponentStyles('padding', selectedComponent.styles.padding)">
+    </div>
 
     <!-- Position Properties -->
     <h4>Properties</h4>
 
-
-    <mat-form-field appearance="outline">
-      <mat-label>Type</mat-label>
-      <input matInput type="text" [(ngModel)]="selectedComponent.properties.type" (input)="updateComponentProperties('type', selectedComponent.properties.type)">
-    </mat-form-field>
-
-
-
+    <div>
+      <label>Type</label>
+      <input  type="text" [(ngModel)]="selectedComponent.properties.type" (input)="updateComponentProperties('type', selectedComponent.properties.type)">
+    </div>
 
     <!-- Position Properties -->
     <h4>Position</h4>
-    <mat-form-field appearance="outline">
-      <mat-label>Left Position</mat-label>
+    <div>
+      <label>Left Position</label>
       <input matInput type="number" [(ngModel)]="selectedComponent.position.left"
              (input)="updateComponentStyles('left', selectedComponent.position.left)">
-    </mat-form-field>
+    </div>
 
-    <mat-form-field appearance="outline">
-      <mat-label>Top Position</mat-label>
+    <div>
+      <label>Top Position</label>
       <input matInput type="number" [(ngModel)]="selectedComponent.position.top"
              (input)="updateComponentStyles('top', selectedComponent.position.top)">
-    </mat-form-field>
+    </div>
 
 <!--    &lt;!&ndash; Behavior Properties &ndash;&gt;-->
 <!--    <h4>Behavior</h4>-->
@@ -224,7 +246,6 @@
         *ngIf="component.componentType === 'div'"
         cdkDrag
         cdkDropList
-        #dropList="cdkDropList"
         [cdkDropListData]="component.children"
         (cdkDropListDropped)="onDrop($event, component)"
         [ngStyle]="{
@@ -232,7 +253,10 @@
           top: component.position.top + 'px',
           backgroundColor: component.styles['backgroundColor'],
           width: component.styles['width'],
-          height: component.styles['height']
+          height: component.styles['height'],
+          border: component.styles['border'],
+          borderRadius: component.styles['borderRadius'],
+          padding: component.styles['padding']
         }"
         (cdkDragMoved)="onDragMoved($event, i)"
         (cdkDragEnded)="onDragEnded($event, i)"

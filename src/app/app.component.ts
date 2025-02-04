@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import {MatCard, MatCardModule} from '@angular/material/card';
-import { CommonModule } from '@angular/common';
+import {CommonModule, NgOptimizedImage} from '@angular/common';
 import { CdkDragDrop, CdkDragEnd, CdkDragMove, CdkDropList, DragDropModule,moveItemInArray } from '@angular/cdk/drag-drop';
 import { FormsModule } from '@angular/forms';
 import { MatGridListModule } from '@angular/material/grid-list';
@@ -14,6 +14,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ComponentNode } from './model/component-node';
 import { Position } from './model/position';
 import { randomUUID } from 'crypto';
+import {components} from "./model/components";
 
 
 
@@ -21,9 +22,9 @@ import { randomUUID } from 'crypto';
   selector: 'app-root',
   standalone: true,
   imports: [
-    MatCardModule,CommonModule, DragDropModule,FormsModule,MatInputModule,MatCheckboxModule,
+    MatCardModule, CommonModule, DragDropModule, FormsModule, MatInputModule, MatCheckboxModule,
     MatGridListModule,
-    MatDatepickerModule
+    MatDatepickerModule, NgOptimizedImage
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
@@ -31,35 +32,19 @@ import { randomUUID } from 'crypto';
 export class AppComponent {
   title = 'UI Composer';
 
-  availableComponents = [
-    { componentType: 'button', label: '', properties: {} },
-    { componentType: 'input', label: 'input', properties: { value: '' } },
-    { componentType: 'checkbox', label: 'Checkbox', properties: { checked: false } },
-    { componentType: 'div', label: 'div', properties: {}, styles: {}, children: [] },
-    { componentType: 'form', label: 'Normal form', properties: {}, styles: {}, children: [] },
-    { componentType: 'label', label: 'label', properties: {}, styles: {}, children: [] },
-    { componentType: 'img', label: 'img', properties: {}, styles: {}, children: [] },
-    { componentType: 'ul', label: 'ul', properties: {}, styles: {}, children: [] },
-    { componentType: 'li', label: 'li', properties: {}, styles: {}, children: [] },
-    { componentType: 'h1', label: 'h1', properties: {}, styles: {}, children: [] }
-];
-
+  availableComponents = components;
 
   contextMenuVisible = false;
   contextMenuPosition = { x: '0px', y: '0px' };
   targetComponent: ComponentNode | undefined;
 
-
   constructor(public dialog: MatDialog) { }
-
-  btn : string = 'button';
 
   canvasComponents: ComponentNode[] = [];
   selectedComponent: any = null;
   generatedCode: string = '';
 
   addComponent(component: any) {
-
     // Get the properties based on the component type
     const additionalProperties = this.getComponentProperties(component);
 
@@ -72,8 +57,14 @@ export class AppComponent {
         backgroundColor: component.styles['backgroundColor'] || 'orange',
         width: component.styles['width'] || '300px',
         height: component.styles['height'] || '50px',
+        borderRadius: component.styles['borderRadius'] || '0px',
+        fontSize: component.styles['fontSize'] || '15px',
+        padding:component.styles['padding'] || '20px',
+        border:component.styles['border'] || '5px solid red',
       },
     });
+
+    console.log(this.canvasComponents)
 
     this.generateAngularCode()
   }
@@ -223,8 +214,29 @@ export class AppComponent {
 
   updateComponentStyles(property: string, value: string) {
     if (this.selectedComponent) {
-      this.selectedComponent.styles[property] = value;
+
+      if (property === 'background-color' && !this.isValidHexColor(value)) {
+        console.warn('Invalid color format. Expected a value like #rrggbb');
+        return; // Skip invalid color assignments
+      }
+
+      console.log('Before Update:', this.selectedComponent.styles);
+
+      const normalizedProperty : string = this.camelToKebabCase(property); // Ensure normalized key
+
+      this.selectedComponent.styles[normalizedProperty] = value;
+
+      console.log('After Update:', this.selectedComponent.styles);
     }
+  }
+
+  isValidHexColor(value: string): boolean {
+    return /^#([0-9A-F]{3}){1,2}$/i.test(value);
+  }
+
+
+  camelToKebabCase(property: string): string {
+    return property.replace(/([A-Z])/g, '-$1').toLowerCase();
   }
 
 
